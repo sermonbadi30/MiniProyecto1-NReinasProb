@@ -77,31 +77,34 @@ func validarReinas(matriz [][]int, tamano int, fila int, columna int) bool {
 
 func resolverNReinas(tamano int, cantReinas int) [][]int{
 	var matriz [][]int = crearMatrizNula(tamano)
-	return resolverNReinasAux(matriz, cantReinas, tamano)
+	fila:= rand.IntN(tamano-1)
+	return resolverNReinasAux(matriz, cantReinas, tamano, fila)
 }
 
-func resolverNReinasAux(matriz [][]int, cantReinas int, tamano int) [][]int{
+func resolverNReinasAux(matriz [][]int, cantReinas int, tamano int, fila int) [][]int{
 	if cantReinas==0{return matriz}
-	fila:=tamano-cantReinas
 	lista:= crearListaDesordenada(tamano)
-	
+	if fila==tamano{fila=0}
 	for i:=0; i<tamano; i++{
 		columna:= lista[i]
 
 		if validarReinas(matriz, tamano, fila, columna){
-			matriz[fila][columna] = 1
-			resultado:= resolverNReinasAux(matriz, cantReinas-1, tamano)
-			if resultado!=nil{
-				return resultado
+			if matriz[fila][columna]!=1{
+				matriz[fila][columna] = 1
+				resultado:= resolverNReinasAux(matriz, cantReinas-1, tamano, fila+1)
+				if resultado!=nil{
+					return resultado
+				}
+				matriz[fila][columna]=0
 			}
-			matriz[fila][columna]=0
+			
 		}
 	}
 	return nil
 }
 
 func main(){
-	fmt.Print(resolverNReinas(1,1))
+	fmt.Print(resolverNReinas(8,8))
 }
 
 func crearListaDesordenada(n int) []int{
