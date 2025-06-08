@@ -1,7 +1,9 @@
 package main
 
-import "fmt"
-import "math/rand"
+import (
+	"fmt"
+	"math/rand/v2"
+)
 
 func crearMatrizNula(tamano int) [][]int {
 	var matriz [][]int
@@ -75,28 +77,46 @@ func validarReinas(matriz [][]int, tamano int, fila int, columna int) bool {
 
 func resolverNReinas(tamano int, cantReinas int) [][]int{
 	var matriz [][]int = crearMatrizNula(tamano)
-	columna:=rand.Intn(tamano)
-	matriz[0][columna]=1
-	return resolverNReinasAux(matriz, cantReinas-1, tamano)
+	return resolverNReinasAux(matriz, cantReinas, tamano)
 }
 
 func resolverNReinasAux(matriz [][]int, cantReinas int, tamano int) [][]int{
 	if cantReinas==0{return matriz}
 	fila:=tamano-cantReinas
+	lista:= crearListaDesordenada(tamano)
+	
 	for i:=0; i<tamano; i++{
-		if validarReinas(matriz, tamano, fila, i){
-			matriz[fila][i] = 1
+		columna:= lista[i]
+
+		if validarReinas(matriz, tamano, fila, columna){
+			matriz[fila][columna] = 1
 			resultado:= resolverNReinasAux(matriz, cantReinas-1, tamano)
 			if resultado!=nil{
 				return resultado
 			}
-			matriz[fila][i]=0
+			matriz[fila][columna]=0
 		}
-		
 	}
 	return nil
 }
 
 func main(){
-	fmt.Print(resolverNReinas(10,10))
+	fmt.Print(resolverNReinas(1,1))
+}
+
+func crearListaDesordenada(n int) []int{
+	lista := make([]int, n)
+	for i:=0;i<n; i++{
+		lista[i]=i
+	} 
+	return shuffleList(lista)
+}
+
+func shuffleList(lista []int) []int{
+	largo:= len(lista)
+    for i := largo - 1; i > 0; i-- {
+        j := rand.IntN(i + 1) 
+        lista[i], lista[j] = lista[j], lista[i] 
+    }
+	return lista
 }
