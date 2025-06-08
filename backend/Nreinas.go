@@ -1,6 +1,7 @@
 package main
 
 import "fmt"
+import "math/rand"
 
 func crearMatrizNula(tamano int) [][]int {
 	var matriz [][]int
@@ -21,7 +22,7 @@ func validarReinas(matriz [][]int, tamano int, fila int, columna int) bool {
 	for i := 0; i < tamano; i++ {
 		if i != columna {
 			if matriz[fila][i] == 1 {
-				fmt.Println("ERROR en vertical")
+				
 				valido = false
 			}
 		}
@@ -31,7 +32,7 @@ func validarReinas(matriz [][]int, tamano int, fila int, columna int) bool {
 	for i := 0; i < tamano; i++ {
 		if i != fila {
 			if matriz[i][columna] == 1 {
-				fmt.Println("ERROR en horizontal")
+				
 				valido = false
 			}
 		}
@@ -40,7 +41,7 @@ func validarReinas(matriz [][]int, tamano int, fila int, columna int) bool {
 	// Diagonal superior derecha
 	for i, j := fila-1, columna+1; i >= 0 && j < tamano; i, j = i-1, j+1 {
 		if matriz[i][j] == 1 {
-			fmt.Println("ERROR en diagonal superior derecha")
+			
 			valido = false
 		}
 	}
@@ -48,7 +49,7 @@ func validarReinas(matriz [][]int, tamano int, fila int, columna int) bool {
 	// Diagonal superior izquierda
 	for i, j := fila-1, columna-1; i >= 0 && j >= 0; i, j = i-1, j-1 {
 		if matriz[i][j] == 1 {
-			fmt.Println("ERROR en Diagonal superior izquierda")
+			
 			valido = false
 		}
 	}
@@ -56,7 +57,7 @@ func validarReinas(matriz [][]int, tamano int, fila int, columna int) bool {
 	// Diagonal inferior derecha
 	for i, j := fila+1, columna+1; i < tamano && j < tamano; i, j = i+1, j+1 {
 		if matriz[i][j] == 1 {
-			fmt.Println("ERROR en Diagonal inferior derecha")
+			
 			valido = false
 		}
 	}
@@ -64,7 +65,7 @@ func validarReinas(matriz [][]int, tamano int, fila int, columna int) bool {
 	// Diagonal inferior izquierda
 	for i, j := fila+1, columna-1; i < tamano && j >= 0; i, j = i+1, j-1 {
 		if matriz[i][j] == 1 {
-			fmt.Println("ERROR en Diagonal inferior izquierda")
+		
 			valido = false
 		}
 	}
@@ -72,13 +73,30 @@ func validarReinas(matriz [][]int, tamano int, fila int, columna int) bool {
 	return valido
 }
 
-func main() {
-	matrizPrueba := [][]int{
-		{1, 0, 1},
-		{0, 1, 0},
-		{1, 0, 1},
-	}
+func resolverNReinas(tamano int, cantReinas int) [][]int{
+	var matriz [][]int = crearMatrizNula(tamano)
+	columna:=rand.Intn(tamano)
+	matriz[0][columna]=1
+	return resolverNReinasAux(matriz, cantReinas-1, tamano)
+}
 
-	resultado := validarReinas(matrizPrueba, 3, 0, 0)
-	fmt.Println("¿Es válido colocar una reina?", resultado)
+func resolverNReinasAux(matriz [][]int, cantReinas int, tamano int) [][]int{
+	if cantReinas==0{return matriz}
+	fila:=tamano-cantReinas
+	for i:=0; i<tamano; i++{
+		if validarReinas(matriz, tamano, fila, i){
+			matriz[fila][i] = 1
+			resultado:= resolverNReinasAux(matriz, cantReinas-1, tamano)
+			if resultado!=nil{
+				return resultado
+			}
+			matriz[fila][i]=0
+		}
+		
+	}
+	return nil
+}
+
+func main(){
+	fmt.Print(resolverNReinas(10,10))
 }
