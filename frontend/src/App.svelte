@@ -1,12 +1,32 @@
 <script>
-  let nReinas = 0;
-  let tamano = 0;
-  let consola = [];
+  import { ResolverLasVegas } from '../wailsjs/go/main/App';
 
-  function generarTablero() {
-    consola = [...consola, `Generando tablero de ${tamano}x${tamano} con ${nReinas} reinas...`];
+  let nReinas = 1;
+  let tamano = 1;
+  let consola = [];
+  let tablero = [];
+
+  async function generarTablero() {
+    consola = [];
+    tablero = [];
+
+    if (nReinas > tamano * tamano) {
+      alert("❌ No se pueden colocar más reinas que espacios disponibles.");
+      return;
+    }
+
+    consola.push(`🧠 Generando tablero de ${tamano}x${tamano} con ${nReinas} reinas...`);
+
+    try {
+      const resultado = await ResolverLasVegas(tamano, nReinas);
+      tablero = resultado.tablero;
+      consola = [...consola, ...resultado.logs];
+    } catch (e) {
+      consola.push("❌ Error al generar el tablero: " + e.message);
+    }
   }
 </script>
+
 
 <style>
   :global(body) {
@@ -91,13 +111,32 @@
     color: #64ffda;
     font-family: 'Source Code Pro', monospace, monospace;
     padding: 15px;
-    height: 200px;
+    height: 300px;
     border-radius: 8px;
     overflow-y: auto;
     white-space: pre-wrap;
     box-shadow: inset 0 0 10px #004d40;
     user-select: text;
   }
+
+  .tablero {
+  display: inline-block;
+  margin-top: 20px;
+  }
+  .fila {
+    display: flex;
+  }
+  .celda {
+    width: 30px;
+    height: 30px;
+    background: #1e1e1e;
+    border: 1px solid #444;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+  }
+
 </style>
 
 <div class="container">
@@ -126,7 +165,17 @@
   </aside>
 
   <main class="content">
-    <h2>Espacio para el tablero</h2>
-    <!-- Aquí se renderizará el tablero -->
+    <h2>Resultado del Tablero</h2>
+    {#if tablero.length > 0}
+      <div class="tablero">
+        {#each tablero as fila}
+          <div class="fila">
+            {#each fila as celda}
+              <span class="celda">{celda === "Q" ? "♛" : ""}</span>
+            {/each}
+          </div>
+        {/each}
+      </div>
+    {/if}
   </main>
 </div>
